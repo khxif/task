@@ -12,6 +12,7 @@ interface AppStore {
 
   billItems: Product[];
   setBillItems: (item: Product) => void;
+  deleteBillItem: (productId: string) => void
 }
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -27,4 +28,6 @@ export const useAppStore = create<AppStore>((set) => ({
   billItems: [],
   setBillItems: (item) =>
     set((state) => ({ billItems: [...state.billItems!, item] })),
+    deleteBillItem: (productId) =>
+    set((state) => ({ billItems: state.billItems?.filter((product) => product._id !== productId) })),
 }));

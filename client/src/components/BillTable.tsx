@@ -16,17 +16,15 @@ interface TableProps {
 }
 
 export default function BillTable({ billItems }: TableProps) {
-  // const [total, setTotal] = useState(0);
-  const [setPaymentModalOpen, billTotal, setBillTotal] = useAppStore(
-    (state) => [state.setPaymentModalOpen, state.billTotal, state.setBillTotal]
-  );
+  const [setPaymentModalOpen, billTotal, setBillTotal, deleteBillItem] =
+    useAppStore((state) => [
+      state.setPaymentModalOpen,
+      state.billTotal,
+      state.setBillTotal,
+      state.deleteBillItem,
+    ]);
 
   useEffect(() => {
-    // setTotal(
-    //   billItems.reduce((acc: any, current: any) => {
-    //     return acc + current.price;
-    //   }, 0)
-    // );
     setBillTotal(
       billItems.reduce((acc: any, current: any) => {
         return acc + current.price;
@@ -47,6 +45,12 @@ export default function BillTable({ billItems }: TableProps) {
           <TableRow key={item._id}>
             <TableCell className="font-medium">{item?.name}</TableCell>
             <TableCell className="text-right">{item?.price}</TableCell>
+            <TableCell
+              className="text-right cursor-pointer"
+              onClick={() => deleteBillItem(item._id)}
+            >
+              x
+            </TableCell>
           </TableRow>
         ))}
         <TableRow>
