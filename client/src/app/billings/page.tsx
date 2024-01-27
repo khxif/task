@@ -1,5 +1,6 @@
 "use client";
 
+import Card from "@/components/Card";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -11,21 +12,36 @@ export default function Page() {
 
   const date = `${year}-${month}-${day}`;
   const [amount, setAmount] = useState(0);
+  const[bills,setBills] = useState<any>([])
 
   useEffect(() => {
-    async function getExpense() {
-      const res = await fetch(`/api/get-daily-expenses/${date}`);
+    async function getBills() {
+      const res = await fetch(`/api/get-daily-bills/${date}`);
       const data = await res.json();
       console.log(data);
+      setBills(data)
       if (!data) return setAmount(0);
-      setAmount(data.amount);
+      setAmount(data.reduce((acc: any,current: any) => acc+current.amount,0));
+      // data.map((items) => {
+      //   items.billItems.map((item) => {
+      //     console.log(item);
+      //   });
+      // });
     }
-    getExpense();
+    getBills();
   }, []);
 
   return (
     <div>
-      <h1 className="font-bold text-2xl">Total expense today: {amount}</h1>
+      <h1 className="font-bold text-2xl">Total expense today:{amount}</h1>
+
+      <div>
+        {
+          bills?.map((items: any) => (
+             <Card key={items._id} items={items} />
+          ))
+        }
+      </div>
     </div>
   );
 }

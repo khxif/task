@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import Product from "./ProductModel";
+import DailyBill from "./models/BillModel";
 import DailyExpense from "./models/DailyExpenseModel";
+import Product from "./models/ProductModel";
 
 export const addProduct = async (req: Request, res: Response) => {
   const { name, price } = req.body;
@@ -66,6 +67,29 @@ export const getDailyExpenses = async (req: Request, res: Response) => {
   const date = req.params.date;
 
   const data = await DailyExpense.findOne({ date });
-  if(!data) return res.status(200).json(null)
+  if (!data) return res.status(200).json(null);
   res.json(data);
 };
+
+export const addDailyBills = async (req: Request, res: Response) => {
+  const date = req.params.date;
+  const { billItems: items, amount } = req.body;
+
+  const billItems = items.map((item: any) => ({
+    name: item.name,
+    amount: item.price,
+  }));
+
+  const newBill = new DailyBill({ billItems, amount, date });
+  const bill = await newBill.save();
+
+  console.log("bill" + bill);
+
+  res.status(200).json(bill);
+};
+
+export const getDailyBills = async (req: Request, res: Response) => {
+  const data = await DailyBill.find()
+  console.log(data);
+  res.json(data)
+}

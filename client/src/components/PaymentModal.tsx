@@ -44,13 +44,19 @@ const FormSchema = z.object({
 export default function PaymentModal() {
   const router = useRouter();
 
-  const [paymentModalOpen, setPaymentModalOpen, billTotal, setBillItems] =
-    useAppStore((state) => [
-      state.paymentModalOpen,
-      state.setPaymentModalOpen,
-      state.billTotal,
-      state.setBillItems,
-    ]);
+  const [
+    paymentModalOpen,
+    setPaymentModalOpen,
+    billTotal,
+    billItems,
+    setBillItems,
+  ] = useAppStore((state) => [
+    state.paymentModalOpen,
+    state.setPaymentModalOpen,
+    state.billTotal,
+    state.billItems,
+    state.setBillItems,
+  ]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -64,12 +70,12 @@ export default function PaymentModal() {
     const date = `${year}-${month}-${day}`;
 
     try {
-      const res = await fetch(`/api/daily-expense/${date}`, {
+      const res = await fetch(`/api/daily-bills/${date}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: billTotal }),
+        body: JSON.stringify({ billItems,amount: billTotal }),
       });
       const data = await res.json();
       console.log(data);
@@ -77,7 +83,7 @@ export default function PaymentModal() {
       console.log(error);
     } finally {
       setPaymentModalOpen(false);
-      router.push('/')
+      router.push("/");
     }
   }
 
