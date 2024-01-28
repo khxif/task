@@ -36,42 +36,6 @@ export const getProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const updateDailyExpense = async (req: Request, res: Response) => {
-  const date = req.params.date;
-  const { amount } = req.body;
-  if (!date || !amount)
-    return res.status(400).json({ message: "Missing Details" });
-
-  const currentExpense: any = await DailyExpense.find({ date });
-
-  if (!currentExpense || currentExpense.length === 0) {
-    const newExpense = new DailyExpense({ amount, date });
-    const data = await newExpense.save();
-    return res.status(200).json({ message: "Expense added" });
-  }
-
-  const currentTotal = currentExpense.reduce(
-    (acc: any, current: any) => acc + current.amount,
-    0
-  );
-  const resp = await DailyExpense.findOneAndUpdate(
-    { date: date },
-    { $set: { amount: currentTotal + amount } },
-    { upsert: false }
-  );
-  // console.log("response" + resp);
-
-  return res.status(200).json({ message: "Expense updated" });
-};
-
-export const getDailyExpenses = async (req: Request, res: Response) => {
-  const date = req.params.date;
-
-  const data = await DailyExpense.findOne({ date });
-  if (!data) return res.status(200).json(null);
-  res.json(data);
-};
-
 export const addDailyBills = async (req: Request, res: Response) => {
   const date = req.params.date;
   const { billItems: items, amount } = req.body;
@@ -94,4 +58,33 @@ export const getDailyBills = async (req: Request, res: Response) => {
   const data = await DailyBill.find({ date });
   console.log(data);
   res.json(data);
+};
+
+export const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await Product.find();
+    console.log(products);
+
+    if (!products) return res.status(200).json(null);
+    res.status(200).json(products);
+  } catch (error) {
+    res.json({ message: (error as Error).message });
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  try {
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({message:'Product deleted successfully'});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };

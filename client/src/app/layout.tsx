@@ -6,6 +6,7 @@ import "./globals.css";
 import AddItemsModal from "@/components/AddItemsModal";
 import { Toaster } from "react-hot-toast";
 import PaymentModal from "@/components/PaymentModal";
+import QueryProvider from "@/components/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, "max-h-screen overflow-y-hidden")}>
-        <Header />
-        {children}
-        <AddItemsModal />
-        <PaymentModal />
-        <Toaster position="bottom-right" />
+        <QueryProvider>
+          <Header />
+          {children}
+          <AddItemsModal />
+          <PaymentModal />
+          <Toaster position="bottom-right" />
+        </QueryProvider>
       </body>
     </html>
   );
