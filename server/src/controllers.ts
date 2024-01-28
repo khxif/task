@@ -28,6 +28,7 @@ export const getProduct = async (req: Request, res: Response) => {
   try {
     const product = await Product.findOne({ name });
     console.log(product);
+    if (!product) return res.status(200).json(null);
 
     return res.status(400).json([product]);
   } catch (error) {
@@ -90,7 +91,7 @@ export const addDailyBills = async (req: Request, res: Response) => {
 
 export const getDailyBills = async (req: Request, res: Response) => {
   const date = req.params.date;
-  const data = await DailyBill.find({date})
+  const data = await DailyBill.find({ date });
   console.log(data);
-  res.json(data)
-}
+  res.json(data);
+};

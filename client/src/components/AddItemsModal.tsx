@@ -15,11 +15,12 @@ export default function AddItemsModal() {
     state.setBillItems,
   ]);
   const [input, setInput] = useState("");
-  const [item, setItem] = useState<Product[]>([]);
+  const [items, setItem] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const res = await fetch("/api/get-product", {
         method: "POST",
@@ -29,12 +30,15 @@ export default function AddItemsModal() {
         body: JSON.stringify({ name: input }),
       });
       const data = await res.json();
-      console.log(data);
+      console.log(data === null);
 
       setItem(data);
-      console.log(item);
+      console.log(items);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
+      setInput("");
     }
   };
 
@@ -60,21 +64,25 @@ export default function AddItemsModal() {
             </span>
           </form>
           <div className="flex flex-col space-y-4">
-            {item?.map((item) => (
-              <div
-                key={item?._id}
-                onClick={() => {
-                  setBillItems(item)
-                  setOpen(false)
-                  setInput('')
-                  setItem([])
-                }}
-                className="flex items-center px-4 cursor-pointer py-2 rounded-md bg-slate-300 justify-between"
-              >
-                <h1>{item?.name}</h1>
-                <p>{item?.price}</p>
-              </div>
-            ))}
+            {!items && !input && (
+              <p className="text-center">No items found..</p>
+            )}
+            {loading && input && <p className="text-center">Loading..</p>}
+            {items &&
+              items?.map((item) => (
+                <div
+                  key={item?._id}
+                  onClick={() => {
+                    setBillItems(item);
+                    setOpen(false);
+                    setItem([]);
+                  }}
+                  className="flex items-center px-4 cursor-pointer py-2 rounded-md bg-slate-300 justify-between"
+                >
+                  <h1>{item?.name}</h1>
+                  <p>{item?.price}</p>
+                </div>
+              ))}
           </div>
         </div>
       </DialogContent>
