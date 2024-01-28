@@ -20,7 +20,9 @@ const formSchema = z.object({
     message: "Enter a proper name",
   }),
   price: z.string().min(1,{
-    message: 'Enter the price.'
+    message:'Enter a valid price'
+  }).refine((value) => !isNaN(Number(value)), {
+    message: 'Please enter a price.',
   }),
 });
 
