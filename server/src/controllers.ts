@@ -89,7 +89,8 @@ export const addDailyBills = async (req: Request, res: Response) => {
 };
 
 export const getDailyBills = async (req: Request, res: Response) => {
-  const data = await DailyBill.find()
+  const date = req.params.date;
+  const data = await DailyBill.find({date})
   console.log(data);
   res.json(data)
 }
